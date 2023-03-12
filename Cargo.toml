@@ -1,0 +1,13 @@
+[package]
+name = "bicycl"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# Ritual doesn't have a release cycle and its API is not stable,
+# so a specific revision should be pinned
+# (and upgraded when needed).
+[dependencies.ritual]
+git = "https://github.com/rust-qt/ritual.git"
+rev = "e2b9b40f1ff57743ae0f3bf3cca43ef84545fc85"
