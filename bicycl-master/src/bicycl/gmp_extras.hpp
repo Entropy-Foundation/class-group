@@ -22,11 +22,18 @@
 #define GMP_EXTRAS_HPP__
 
 #include <gmp.h>
-
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <algorithm>
 #include <vector>
+
+#include "pair_BLS12381.h"
+
+using namespace core;
+using namespace BLS12381;
+using namespace BLS12381_FP;
+using namespace BLS12381_BIG;
 
 namespace BICYCL
 {
@@ -78,8 +85,6 @@ namespace BICYCL
 
   class Mpz
   {
-    
-      
   
     public:
       mpz_t mpz_;
@@ -90,7 +95,7 @@ namespace BICYCL
       Mpz (unsigned long);
       Mpz (long);
       Mpz (const std::string &);
-      Mpz (const unsigned char *, size_t);
+      Mpz (const std::vector<unsigned char> &);
 
       /* destructor */
       ~Mpz ();
@@ -127,7 +132,10 @@ namespace BICYCL
       operator mpz_srcptr() const;
       operator unsigned long int() const;
       operator long int() const;
-      void BIG_to_Mpz (const char * , size_t);
+      void BIG_to_Mpz (BIG& x);
+      void Mpz_to_BIG (BIG& x);
+      void mpz_to_vector(std::vector<unsigned char>& result);
+      void mpz_to_vector(std::vector<unsigned char>& result) const;
 
       /* getters */
       /* */
@@ -218,8 +226,8 @@ namespace BICYCL
                                   Mpz &, mp_size_t);
 
       /* I/O */
-      //friend std::ostream & operator<< (std::ostream &, const Mpz &);
-      //friend std::istream & operator>> (std::istream &, Mpz &);
+      friend std::ostream & operator<< (std::ostream &, const Mpz &);
+      friend std::istream & operator>> (std::istream &, Mpz &);
 
       /* exception */
       class ModInverseException;

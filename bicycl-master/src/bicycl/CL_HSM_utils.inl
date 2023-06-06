@@ -21,6 +21,7 @@
 #ifndef CL_HSM_UTILS_INL__
 #define CL_HSM_UTILS_INL__
 
+
 /* */
 template <class Cryptosystem>
 inline
@@ -47,6 +48,7 @@ inline
 CL_HSM_PublicKey<Cryptosystem>::CL_HSM_PublicKey (const Cryptosystem &C,
                                       const CL_HSM_SecretKey<Cryptosystem> &sk)
 {
+
   C.power_of_h (pk_, sk);
 
   d_ = (C.encrypt_randomness_bound().nbits () + 1)/2;
@@ -61,7 +63,34 @@ CL_HSM_PublicKey<Cryptosystem>::CL_HSM_PublicKey (const Cryptosystem &C,
       pk_d_precomp_ = pk_de_precomp_;
     C.Cl_G().nudupl (pk_de_precomp_, pk_de_precomp_);
   }
+
 }
+
+template <class Cryptosystem>
+inline
+CL_HSM_PublicKey<Cryptosystem>::CL_HSM_PublicKey (const Cryptosystem &C,
+                          const QFI& pk){
+
+  pk_ = pk;
+
+  d_ = (C.encrypt_randomness_bound().nbits () + 1)/2;
+  e_ = d_/2 + 1;
+
+  pk_de_precomp_ = pk_;
+  for (size_t i = 0; i < d_+e_; i++)
+  {
+    if (i == e_)
+      pk_e_precomp_ = pk_de_precomp_;
+    if (i == d_)
+      pk_d_precomp_ = pk_de_precomp_;
+    C.Cl_G().nudupl (pk_de_precomp_, pk_de_precomp_);
+  }
+
+}
+
+template <class Cryptosystem>
+inline
+CL_HSM_PublicKey<Cryptosystem>::CL_HSM_PublicKey () {}
 
 template <class Cryptosystem>
 inline
@@ -69,6 +98,7 @@ const QFI & CL_HSM_PublicKey<Cryptosystem>::elt () const
 {
   return pk_;
 }
+
 
 /* */
 template <class Cryptosystem>
@@ -148,6 +178,10 @@ CL_HSM_ClearText<Cryptosystem>::CL_HSM_ClearText (const Cryptosystem &C,
   Mpz::mul (*this, m, s);
   Mpz::mod (*this, *this, C.cleartext_bound());
 }
+
+template <class Cryptosystem>
+inline
+CL_HSM_ClearText<Cryptosystem>::CL_HSM_ClearText(){}
 
 /* */
 template <class Cryptosystem>
@@ -262,5 +296,12 @@ const QFI & CL_HSM_CipherText<Cryptosystem>::c2 () const
 {
   return c2_;
 }
+
+template <class Cryptosystem>
+inline std::string CL_HSM_CipherText<Cryptosystem>::Cipher_to_string(){
+
+  return this->c1_.QFI_to_string() + this->c2_.QFI_to_string();
+}
+
 
 #endif /* CL_HSM_UTILS_INL__ */

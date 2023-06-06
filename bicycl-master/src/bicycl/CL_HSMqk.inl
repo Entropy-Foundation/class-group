@@ -323,19 +323,21 @@ bool CL_HSMqk::large_message_variant () const
 }
 
 /* */
-/*inline
+inline
 std::ostream & operator<< (std::ostream &o, const CL_HSMqk &C)
 {
   return o << "q = " << C.q() << " # " << C.q().nbits() << " bits" << std::endl
            << "k = " << C.k() << std::endl
            << "p = " << C.p() << " # " << C.p().nbits() << " bits" << std::endl
+           << "DeltaK = discriminant # " << C.DeltaK() << std::endl
            << "DeltaK = -p*q # " << C.DeltaK().nbits() << " bits" << std::endl
            << "Delta = -p*q^(2*k+1) # " << C.Delta().nbits() << " bits" << std::endl
+           << "Delta = discriminant # " << C.Delta() << std::endl
            << "h = " << C.h() << std::endl
            << "compact_variant = " << C.compact_variant() << std::endl
            << "large_message_variant = " << C.large_message_variant()
            << std::endl;
-}*/
+}
 
 /* */
 inline
@@ -616,31 +618,40 @@ CL_HSMqk::CipherText CL_HSMqk::encrypt (const PublicKey &pk, const ClearText &m,
 }
 
 inline
-std::vector<CL_HSMqk::CipherText> CL_HSMqk::encrypt_all (const std::vector<PublicKey> &pk, const std::vector<ClearText> &m,
-                              const Mpz &r) const
+void CL_HSMqk::encrypt_all (const PublicKey* pk, const ClearText* m, const Mpz&r, CipherText* result, int n) const
 {
   
-  std::vector<CL_HSMqk::CipherText> result;
-  result.resize(m.size());
+  // calculate c1 = h^r
+    QFI c1;
+    power_of_h(c1, r); 
 
-  QFI c1;
+    // create a vector to store the thread objects
+    std::vector<std::thread> threads;
 
-  power_of_h (c1, r); /* c1 = h^r */
-  
-  for(unsigned long i=0; i<m.size(); i++){
-    QFI fm = power_of_f (m[i]); /* fm = [q^2, q, ...]^m */
-    QFI c2;
-    pk[i].exponentiation (*this, c2, r); /* pk^r */
+    for(int i = 0; i < n; i++){
+        // create a new thread for each loop iteration
+        threads.push_back(std::thread([&, i]() {
+            // calculate fm = [q^2, q, ...]^m
+            QFI fm = power_of_f(m[i]);
 
-    Cl_Delta().nucomp (c2, c2, fm); /* c2 = f^m*pk^r */
+            // calculate pk^r
+            QFI c2;
+            pk[i].exponentiation(*this, c2, r);
 
+            // calculate c2 = f^m*pk^r
+            Cl_Delta().nucomp(c2, c2, fm);
 
-    result[i].c1_ = c1;
-    result[i].c2_ = c2;
+            // store the results in the array
+            result[i].c1_ = c1;
+            result[i].c2_ = c2;
+        }));
+    }
 
-  }
-
-  return result;
+    // join all the threads, ensuring they have all finished
+    // executing before moving on
+    for(auto& th : threads){
+        th.join();
+    }
 
 }
 
@@ -916,5 +927,6 @@ CL_HSMqk::Genus CL_HSMqk::genus (const QFI &f) const
   }
   return { chi_q, chi_p };
 }
+
 
 #endif /* CL_HSM_INL__ */

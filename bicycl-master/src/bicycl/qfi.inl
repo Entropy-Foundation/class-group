@@ -442,11 +442,11 @@ Mpz QFI::kernel_representative_2exp (size_t k, const Mpz &DeltaK) const
 
 
 /* */
-/*inline
+inline
 std::ostream & operator<< (std::ostream &o, const QFI &f)
 {
   return o << "(" << f.a_ << ", " << f.b_ << ", " << f.c_ << ")";
-}*/
+}
 
 /*
  * Set the coefficient c of the qfi given its discriminant.
@@ -1188,7 +1188,7 @@ void QFI::nupow (QFI &r, const QFI &f0, const Mpz &n0,
  * Assumes: f0 and f1 have the same discriminant
  *          n0 and n1 are positive
  */
-void QFI::nupow (QFI &r, const QFI &f, const Mpz &n, size_t d, size_t e,
+inline void QFI::nupow (QFI &r, const QFI &f, const Mpz &n, size_t d, size_t e,
                  const QFI &fe, const QFI &fd, const QFI &fed, const Mpz &L)
 {
   if (n.is_zero ())
@@ -1303,13 +1303,13 @@ size_t QFICompressedRepresentation::nbits () const
 }
 
 /* */
-/*inline
+inline
 std::ostream & operator<< (std::ostream &o,
                            const QFICompressedRepresentation &f)
 {
   return o << "(" << f.ap << ", " << f.g << ", " << f.tp << ", " << f.b0 << ", "
            << (f.is_neg ? "1" : "0") << ")";
-}*/
+}
 
 /******************************************************************************/
 inline
@@ -1496,6 +1496,91 @@ void ClassGroup::nupow (QFI &r, const QFI &f, const Mpz &n, size_t d, size_t e,
                  const QFI &fe, const QFI &fd, const QFI &fed) const
 {
   QFI::nupow (r, f, n, d, e, fe, fd, fed, default_nucomp_bound());
+}
+
+inline void ClassGroup::mult_exp(QFI & P, std::vector<QFI> const & X, std::vector<Mpz> const & e) const
+{
+    // Check for size inconsistencies or empty vectors
+    if (X.size() != e.size() || X.size() == 0) {
+        return;
+    }
+
+    int i, j, k, n;
+    n = X.size();
+    Mpz t, mt;
+    QFI S, R, B[16];
+    P = QFI(); // Initialize P
+
+    // Find the largest element in 'e'
+    mt = e[0];
+    for (i=1; i<n; i++) {
+        if (e[i] > mt) {
+            mt = e[i];
+        }
+    }
+
+    int nb = (mt.nbits()+3)/4;
+
+    // Implementing Pippenger's algorithm
+    for (i=nb-1; i>=0; i--) {
+        // Reset the array B for each iteration
+        for (j=0; j<16; j++) {
+            B[j] = QFI();
+        }
+
+        for (j=0; j<n; j++) {
+            mt = e[j];
+            Mpz::divby2k(mt, mt, 4*i);
+            Mpz res;
+            mpz_tdiv_r_2exp(res.mpz_, mt.mpz_, 4);
+
+            unsigned long int vv = res;
+            k = int(vv);
+
+            if (B[k] == QFI()) {
+                B[k] = X[j];
+            } else {
+                nucomp(B[k], B[k], X[j]);
+            }
+        }
+
+        R = QFI();
+        S = QFI();
+
+        for (j=15; j>=1; j--) {
+            if (!(B[j] == QFI())) {
+                if (R == QFI()) {
+                    R = B[j];
+                } else {
+                    nucomp(R, R, B[j]);
+                }
+            }
+
+            if (!(R == QFI())) {
+                if (S == QFI()) {
+                    S = R;
+                } else {
+                    nucomp(S, S, R);
+                }
+            }
+        }
+
+        if (!(P == QFI())) {
+            for (j=0; j<4; j++) {
+                nudupl(P, P);
+            }
+        }
+
+        if (!(S == QFI())) {
+            if (P == QFI()) {
+                P = S;
+            } else {
+                nucomp(P, P, S);
+            }
+        } 
+    }
+
+    P.reduction();
 }
 
 #endif /* QFI_INL__ */

@@ -1,4 +1,8 @@
 cmake_minimum_required (VERSION 3.5.1)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 # CMake doc can be found at https://cmake.org/cmake/help/v3.5/
 
 project (BICYCL VERSION 0.0.1 LANGUAGES CXX)
@@ -9,6 +13,10 @@ set (BICYCL_DESCRIPTION "BIBYCL Implements CryptographY in CLass groups")
 ################################################################################
 set (MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake.utils")
 list (APPEND CMAKE_MODULE_PATH "${MODULE_DIR}")
+
+set(OPENSSL_ROOT_DIR /usr/local/opt/openssl@3)
+set(OPENSSL_LIBRARIES /usr/local/opt/openssl@3/lib)
+
 
 ##############################################################################
 # Options for install directory
@@ -99,9 +107,26 @@ endif()
 ################################################################################
 # Tests
 ################################################################################
-add_subdirectory (tests EXCLUDE_FROM_ALL)
+#add_subdirectory (tests EXCLUDE_FROM_ALL)
 
 ################################################################################
 # Benchmarks
 ################################################################################
-add_subdirectory (benchs EXCLUDE_FROM_ALL)
+#add_subdirectory (benchs EXCLUDE_FROM_ALL)
+
+################################################################################
+
+find_package (gmp REQUIRED)
+find_package (OpenSSL REQUIRED)
+
+include_directories(miracl/)
+include_directories(CTPL/)
+
+include_directories(/usr/local/lib/)
+link_directories(/usr/local/lib/)
+include_directories(/usr/local/include/)
+
+add_executable (main main.cpp)
+
+target_link_libraries (main  bicycl)
+target_link_libraries(main core)

@@ -284,19 +284,94 @@ Mpz::Mpz (const std::string &s)
                                         + std::string ("' as a valid number"));
 }
 
-/* */
 inline
-Mpz::Mpz (const unsigned char *data, size_t length) : Mpz()
+Mpz::Mpz (const std::vector<unsigned char> &data) : Mpz()
 {
-  mpz_import (mpz_, length, -1, 1, -1, 0, data);
+  if(data.size()==0){
+    return;
+  }
+
+  size_t nb_bits = (data.size()-1) * CHAR_BIT;
+
+  unsigned char is_neg = data[0];
+
+  /* the binary data is interpreted most significant bit first */
+  mpz_import (mpz_, data.size()-1, 1, 1, 0, 0, data.data() + 1);
+  if (nb_bits > (data.size()-1) * CHAR_BIT)
+    throw std::runtime_error ("not enough data to read the number of bits");
+  else
+    divby2k (*this, *this, (data.size()-1) * CHAR_BIT - nb_bits);
+
+  if(is_neg == '1'){
+    neg();
+  }
+}
+
+
+inline void Mpz::BIG_to_Mpz (BIG& x){
+
+  char*  x_bytes = new char[48];
+  BIG_toBytes(x_bytes, x);
+
+  const unsigned char *data_unsigned_char = reinterpret_cast<const unsigned char*>(x_bytes);
+  mpz_import (mpz_, 48, 1, 1, -1, 0, data_unsigned_char);
+
+  delete[] x_bytes;
+}
+
+
+inline void Mpz::Mpz_to_BIG (BIG& x){
+
+  size_t length = mpz_sizeinbase(mpz_, 256)+ 1;
+  unsigned char* arr = new unsigned char[length];
+  mpz_export(arr, &length, 1, 1, -1, 0, mpz_);
+  char *data_char = reinterpret_cast<char*>(arr);
+  BIG_fromBytesLen(x, data_char, length);
+
+  delete[] arr;
 
 }
 
 
-inline void Mpz::BIG_to_Mpz (const char * data, size_t length){
+inline void Mpz::mpz_to_vector(std::vector<unsigned char>& result){
 
-  const unsigned char *data_unsigned_char = reinterpret_cast<const unsigned char*>(data);
-  mpz_import (mpz_, length, 1, 1, -1, 0, data_unsigned_char);
+  size_t length = mpz_sizeinbase(mpz_, 256) + 1;
+  unsigned char* arr = new unsigned char[length];
+  mpz_export(arr, &length, 1, 1, 0, 0, mpz_);
+
+  if (sgn() == 1){
+    result.push_back('0');
+  }
+  else {
+    result.push_back('1');
+  }
+
+  for(size_t i=0; i<length; i++){
+    result.push_back(arr[i]);
+  }
+
+  delete[] arr;
+
+}
+
+inline void Mpz::mpz_to_vector(std::vector<unsigned char>& result) const{
+
+  size_t length = mpz_sizeinbase(mpz_, 256) + 1;
+  unsigned char* arr = new unsigned char[length];
+  mpz_export(arr, &length, 1, 1, 0, 0, mpz_);
+
+  if (sgn() == 1){
+    result.push_back('0');
+  }
+  else {
+    result.push_back('1');
+  }
+
+  for(size_t i=0; i<length; i++){
+    result.push_back(arr[i]);
+  }
+
+  delete[] arr;
 
 }
 
@@ -1366,7 +1441,7 @@ void Mpz::partial_euclid (Mpz &u00, Mpz &u01, Mpz &u10, Mpz &u11, Mpz &a,
 }
 
 /* */
-/*std::ostream & operator<< (std::ostream &o, const Mpz &v)
+std::ostream & operator<< (std::ostream &o, const Mpz &v)
 {
   return o << v.mpz_;
 }
@@ -1375,7 +1450,7 @@ void Mpz::partial_euclid (Mpz &u00, Mpz &u01, Mpz &u10, Mpz &u11, Mpz &a,
 std::istream & operator>> (std::istream &i, Mpz &v)
 {
   return i >> v.mpz_;
-}*/
+}
 
 /* */
 inline

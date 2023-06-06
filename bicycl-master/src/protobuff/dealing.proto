@@ -1,0 +1,46 @@
+// See README.md for information and build instructions.
+//
+// Note: START and END tags are used in comments to define sections used in
+// tutorials.  They are not part of the syntax for Protocol Buffers.
+//
+// To get an in-depth walkthrough of this file and the related examples, see:
+// https://developers.google.com/protocol-buffers/docs/tutorials
+
+syntax = "proto3";
+package protobuff_ser;
+
+import "google/protobuf/timestamp.proto";
+
+message QFI{
+  bytes ap_vec = 1;
+  bytes g_vec = 2;
+  bytes tp_vec = 3;
+  bytes b0_vec = 4;
+  bool is_neg = 5;
+
+}
+
+message ECP{
+  bytes x_vec = 1;
+  bytes y_vec = 2; 
+}
+
+message NIZK{
+  QFI ff_qfi = 1;
+  ECP aa_ecp = 2; 
+  QFI yy_qfi = 3;
+  bytes z_r_vec = 4;
+  bytes z_alpha_vec = 5;
+}
+
+message Dealing{
+
+  repeated QFI ciphertexts = 1;
+  QFI g_r = 2; 
+  repeated ECP public_coefficients = 3;
+  NIZK nizk_share = 4;
+
+};
+
+
+

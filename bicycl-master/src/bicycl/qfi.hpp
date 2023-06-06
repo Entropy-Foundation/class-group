@@ -45,10 +45,9 @@ namespace BICYCL
    */
   class QFI
   {
-    protected:
+    public:
       Mpz a_, b_, c_;
 
-    public:
       /** default ctor, set the form to (1,1,1) */
       QFI ();
       /* getters */
@@ -98,9 +97,9 @@ namespace BICYCL
       Mpz kernel_representative_2exp (size_t, const Mpz &) const;
 
       /* I/O */
-      //friend std::ostream & operator<< (std::ostream &, const QFI &);
+      friend std::ostream & operator<< (std::ostream &, const QFI &);
 
-    protected:
+    //protected:
       void set_c_from_disc (const Mpz &disc);
 
       /* methods for reduction */
@@ -156,8 +155,8 @@ namespace BICYCL
       size_t nbits () const;
 
       /* I/O */
-      //friend std::ostream & operator<< (std::ostream &,
-      //                                  const QFICompressedRepresentation &);
+      friend std::ostream & operator<< (std::ostream &,
+                                       const QFICompressedRepresentation &);
   };
 
   /** Class groups of binary forms of imaginary quadratic fields.
@@ -194,6 +193,9 @@ namespace BICYCL
                   const Mpz &) const;
       void nupow (QFI &, const QFI &, const Mpz &, size_t, size_t, const QFI &,
                   const QFI &, const QFI &) const;
+
+      void mult_exp(QFI &, std::vector<QFI> const &, std::vector<Mpz> const &) const;
+
   };
 
   #include "qfi.inl"

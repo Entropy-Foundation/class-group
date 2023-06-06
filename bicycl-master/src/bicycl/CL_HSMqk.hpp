@@ -21,10 +21,6 @@
 #ifndef CL_HSMqk_HPP__
 #define CL_HSMqk_HPP__
 
-#include <iostream>
-#include <tuple>
-#include <stdexcept>
-
 #include <openssl/evp.h> /* for Shake256 implementation */
 
 #include "bicycl/gmp_extras.hpp"
@@ -41,7 +37,7 @@ namespace BICYCL
    */
   class CL_HSMqk
   {
-    protected:
+    public:
       /** an odd prime. */
       Mpz q_;
 
@@ -89,7 +85,7 @@ namespace BICYCL
       QFI h_d_precomp_;
       QFI h_de_precomp_;
 
-    public:
+    
       /** Class used to represent a secret key of the cryptosystem */
       using SecretKey = _Utils::CL_HSM_SecretKey<CL_HSMqk>;
       /** Class used to represent a public key of the cryptosystem */
@@ -237,8 +233,9 @@ namespace BICYCL
       /** Encrypt @p m using public key @p pk and randomness @p r*/
       CipherText encrypt (const PublicKey &pk, const ClearText &m,
                           const Mpz&r) const;
-      std::vector<CipherText> encrypt_all (const std::vector<PublicKey> &pk, const std::vector<ClearText> &m,
-                          const Mpz&r) const;
+
+      void encrypt_all (const PublicKey* pk, const ClearText* m,
+                          const Mpz&r, CipherText* result, int n) const;
 
       /** Decrypt @p c using secret key @p sk*/
       ClearText decrypt (const SecretKey &sk, const CipherText &c) const;
@@ -261,7 +258,7 @@ namespace BICYCL
       /**@}*/
 
       /** Print the public parameters of the cryptosystem */
-      //friend std::ostream & operator<< (std::ostream &, const CL_HSMqk &);
+      friend std::ostream & operator<< (std::ostream &, const CL_HSMqk &);
 
     protected:
       /* utils for ctor */
@@ -273,7 +270,6 @@ namespace BICYCL
       void F_kerphi_pow (Mpz &, const Mpz &, const Mpz &) const;
       size_t F_kerphi_div (Mpz &, const Mpz &, size_t, const Mpz &) const;
   };
-
 
   #include "CL_HSMqk.inl"
 

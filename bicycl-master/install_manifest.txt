@@ -1,0 +1,10 @@
+/usr/local/include/bicycl.hpp
+/usr/local/include/bicycl/seclevel.hpp
+/usr/local/include/bicycl/gmp_extras.hpp
+/usr/local/include/bicycl/gmp_extras.inl
+/usr/local/include/bicycl/qfi.hpp
+/usr/local/include/bicycl/qfi.inl
+/usr/local/include/bicycl/CL_HSM_utils.hpp
+/usr/local/include/bicycl/CL_HSM_utils.inl
+/usr/local/include/bicycl/CL_HSMqk.hpp
+/usr/local/include/bicycl/CL_HSMqk.inl

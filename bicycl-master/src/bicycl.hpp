@@ -29,5 +29,8 @@
 #include "bicycl/qfi.hpp"
 #include "bicycl/seclevel.hpp"
 #include "bicycl/CL_HSMqk.hpp"
+#include "bicycl/DKG.hpp"
+#include "bicycl/dealing.pb.h"
+#include "bicycl/NetworkingManager.hpp"
 
 #endif /* BICYCL_HPP__ */

@@ -47,7 +47,7 @@ namespace BICYCL
     template <class Cryptosystem>
     class CL_HSM_PublicKey
     {
-      protected:
+      public:
         /** The actual public key: a QFI */
         QFI pk_;
         /** Precomputation data: a positive integer */
@@ -57,11 +57,15 @@ namespace BICYCL
         QFI pk_e_precomp_;
         QFI pk_d_precomp_;
         QFI pk_de_precomp_;
-
-      public:
+      
         /* constructors */
         CL_HSM_PublicKey (const Cryptosystem &,
                           const CL_HSM_SecretKey<Cryptosystem> &);
+
+        CL_HSM_PublicKey (const Cryptosystem &,
+                          const QFI&);
+
+        CL_HSM_PublicKey ();
 
         /* getters */
         const QFI & elt () const;
@@ -97,6 +101,7 @@ namespace BICYCL
         CL_HSM_ClearText (const Cryptosystem &,
                           const CL_HSM_ClearText<Cryptosystem> &,
                           const Mpz &);
+        CL_HSM_ClearText ();
     };
 
     /**
@@ -130,6 +135,8 @@ namespace BICYCL
         /* getters */
         const QFI & c1 () const;
         const QFI & c2 () const;
+
+        std::string Cipher_to_string();
     };
 
     #include "CL_HSM_utils.inl"
