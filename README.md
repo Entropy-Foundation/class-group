@@ -2,7 +2,7 @@
 
 Follow these steps to build and test the library:
 
-Step 1: Intall BICYCL library at https://github.com/Entropy-Foundation/BICYCL
+Step 1: Install BICYCL library at https://github.com/Entropy-Foundation/BICYCL
 
 Step 2: `mkdir build bin`
 
