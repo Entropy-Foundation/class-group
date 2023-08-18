@@ -4,12 +4,14 @@ Follow these steps to build and test the library:
 
 Step 1: Intall BICYCL library at https://github.com/Entropy-Foundation/BICYCL
 
-Step 2: cd build
+Step 2: `mkdir build bin`
 
-Step 3: cmake ..
+Step 3: `cd build`
 
-Step 4: make
+Step 4: `cmake ..`
 
-Step 5: cd ../bin/
+Step 5: `make`
 
-Step 6: ./main
+Step 6: `cd ../bin/`
+
+Step 7: `./main`
