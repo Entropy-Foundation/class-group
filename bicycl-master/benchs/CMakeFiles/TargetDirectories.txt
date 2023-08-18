@@ -1,6 +1,0 @@
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/rebuild_cache.dir
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/main.dir
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/benchs_build.dir
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/edit_cache.dir
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/main_build.dir
-/Users/hamzasaleem/Desktop/bicycl-master/benchs/CMakeFiles/benchs.dir
