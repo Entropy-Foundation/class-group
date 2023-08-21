@@ -1,4 +1,0 @@
-MIRACL Core Crypto SDK
-Copyright (c) 2020 MIRACL.com
-
-https://www.miracl.com
