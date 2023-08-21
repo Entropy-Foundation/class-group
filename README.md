@@ -1,8 +1,7 @@
 # Class Group DKG
 
 We implement a class-group based DKG (distributed key generation) algorithm using BICYCL library at: https://github.com/Entropy-Foundation/BICYCL.
-Our implementation is based on a modified version of BICYCL library and we use Miracl core library at: https://github.com/miracl/core for BLS-12381 curve implementation. The Miracl core library is licensed under the Apache License v2.0 and the BICYCL library is licensed under GNU General Public License v3.0. 
-
+Our implementation is based on a modified version of BICYCL library and we use Miracl core library at: https://github.com/miracl/core for BLS-12381 curve implementation.
 Follow these steps to build and test the library:
 
 Step 1: Install BICYCL library at https://github.com/Entropy-Foundation/BICYCL
