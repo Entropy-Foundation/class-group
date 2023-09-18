@@ -160,7 +160,9 @@ void DKG_Helper::gen_test_config(){
   std::vector<PublicKey> public_keys;
   std::vector<CipherText> ciphertexts;
 
-  CL_HSMqk C(q_mpz, 1, SecLevel::All()[1], randgen);
+  SecLevel seclevel("128");
+
+  CL_HSMqk C(q_mpz, 1, seclevel, randgen);
 
   std::ofstream outfile_cl(config_file_cl, std::ios::binary);
     if (!outfile_cl.is_open()) {
