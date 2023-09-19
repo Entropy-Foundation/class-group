@@ -57,14 +57,19 @@ void randseed (RandGen &randgen)
 void randseed (csprng& RNG)
   {
 
-    std::random_device rd;
-    std::uniform_int_distribution<unsigned char> dist(0, 255);
-    char random_data[128];
-    for (unsigned long int i = 0; i < sizeof(random_data); i++) {
-        random_data[i] = static_cast<char>(dist(rd));
-    }
+    int i;
+    unsigned long ran;
+    char raw[100];
+    octet RAW = {0, sizeof(raw), raw};
 
-    octet RAW = {0, sizeof(random_data), random_data};
+    time((time_t *)&ran);
+
+    RAW.len = 100;              // fake random seed source
+    RAW.val[0] = ran;
+    RAW.val[1] = ran >> 8;
+    RAW.val[2] = ran >> 16;
+    RAW.val[3] = ran >> 24;
+    for (i = 4; i < 100; i++) RAW.val[i] = i;
 
     CREATE_CSPRNG(&RNG, &RAW);  // initialise strong RNG
   }
